@@ -8,12 +8,14 @@ public class CubeComponent
     : MonoBehaviour
     , IPointerDownHandler
     , IPointerUpHandler
-    , IDragHandler
+    , IPointerEnterHandler
+    , IPointerExitHandler
 {
     [SerializeField] private Image UpLine;
     [SerializeField] private Image RightLine;
     [SerializeField] private Image DownLine;
     [SerializeField] private Image LeftLine;
+    [SerializeField] private Image Center;
 
     private RectTransform RectTransform;
     private float halfRectWidth;
@@ -29,7 +31,7 @@ public class CubeComponent
         this.halfRectHeight = this.RectTransform.rect.height / 2;
 
         this.InitPoint();
-        Debug.Log(string.Format("rectWidth: {0} rectHeight: {1}", this.halfRectWidth, this.halfRectHeight));
+        //Debug.Log(string.Format("rectWidth: {0} rectHeight: {1}", this.halfRectWidth, this.halfRectHeight));
     }
 
     private void InitPoint()
@@ -38,6 +40,8 @@ public class CubeComponent
         this.RightPoint.x = this.halfRectWidth;
         this.DownPoint.y = -this.halfRectHeight;
         this.LeftPoint.x = -this.halfRectWidth;
+
+        this.Center.gameObject.SetActive(false);
     }
 
     private Cube Cube;
@@ -54,99 +58,58 @@ public class CubeComponent
 
     private void Update()
     {
-        if (!this.Cube.IsDirty)
+        if (this.Cube == null || !this.Cube.IsDirty)
             return;
 
         this.Cube.IsDirty = false;
 
-        if (this.Cube.UpColor != MyColor.None)
-        {
-            this.UpLine.color = this.Cube.UpColor.ToColor();
-        }
+        this.UpLine.color = this.Cube.UpColor.ToColor();
+        this.UpLine.enabled = this.Cube.UpColor != MyColor.None;
 
-        if (this.Cube.RightColor != MyColor.None)
-        {
-            this.RightLine.color = this.Cube.RightColor.ToColor();
-        }
+        this.RightLine.color = this.Cube.RightColor.ToColor();
+        this.RightLine.enabled = this.Cube.RightColor != MyColor.None;
 
-        if (this.Cube.DownColor != MyColor.None)
-        {
-            this.DownLine.color = this.Cube.DownColor.ToColor();
-        }
+        this.DownLine.color = this.Cube.DownColor.ToColor();
+        this.DownLine.enabled = this.Cube.DownColor != MyColor.None;
 
-        if (this.Cube.LeftColor != MyColor.None)
-        {
-            this.LeftLine.color = this.Cube.LeftColor.ToColor();
-        }
+        this.LeftLine.color = this.Cube.LeftColor.ToColor();
+        this.LeftLine.enabled = this.Cube.LeftColor != MyColor.None;
     }
 
     #region Event Handler
-    private Vector2 startPos;
-    public void OnDrag(PointerEventData eventData)
+    public Action<int, int, Direction> OnDraw;
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        var localPos = this.transform.InverseTransformPoint(eventData.position);
+        Vector2 localPos = this.transform.InverseTransformPoint(eventData.position);
+        var dir = localPos.ToDirection();
+
+        //OnDraw.SafeInvoke(this.Row, this.Col, dir);
+        //Debug.Log(string.Format("Mouse Enter! {0}/{1}", this.Row, this.Col));
+        //this.Center.gameObject.SetActive(true);
     }
 
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Vector2 localPos = this.transform.InverseTransformPoint(eventData.position);
+        var dir = localPos.ToDirection();
+
+        OnDraw.SafeInvoke(this.Row, this.Col, dir);
+        Debug.Log(string.Format("Mouse Exit! {0}/{1}", this.Row, this.Col));
+        this.Center.gameObject.SetActive(false);
+    }
+
+    public Action OnDown;
+    public Action OnUp;
     public void OnPointerDown(PointerEventData eventData)
     {
-        var localPos = this.transform.InverseTransformPoint(eventData.position);
-        this.startPos = this.SnapPoint(localPos);
-
-        Debug.Log(string.Format("Down Point: {0} Snap To: (x: {1}, y: {2})",
-            localPos,
-            this.startPos.x,
-            this.startPos.y));
+        this.OnDown.SafeInvoke();
+        this.Center.gameObject.SetActive(true);
     }
 
-    public Action<int, int, Direction> OnDraw;
     public void OnPointerUp(PointerEventData eventData)
     {
-        var localPos = this.transform.InverseTransformPoint(eventData.position);
-        var snapPoint = this.SnapPoint(localPos);
-
-        var dir = (snapPoint - this.startPos).ToDirection();
-        if (dir == Direction.None)
-            return;
-
-        Debug.Log(string.Format("Down Point: {0} Snap To: (x: {1}, y: {2}), dir: {3}, Direction: {4}",
-            localPos,
-            snapPoint.x,
-            snapPoint.y,
-            snapPoint - this.startPos,
-            dir
-            ));
-
-        OnDraw.SafeInvoke(this.Row, this.Col, this.GetFinalDirection(this.startPos, snapPoint));
-    }
-
-    private Direction GetFinalDirection(Vector2 start, Vector2 end)
-    {
-        var dir = (end - start).ToDirection();
-        if (dir == Direction.None)
-            return Direction.None;
-
-        if (dir == Direction.Up && (start - this.DownPoint).sqrMagnitude < float.Epsilon)
-            return Direction.Down;
-
-        if (dir == Direction.Right && (start - this.LeftPoint).sqrMagnitude < float.Epsilon)
-            return Direction.Left;
-
-        if (dir == Direction.Down && (start - this.UpPoint).sqrMagnitude < float.Epsilon)
-            return Direction.Up;
-
-        if (dir == Direction.Left && (start - this.RightPoint).sqrMagnitude < float.Epsilon)
-            return Direction.Right;
-
-        return dir;
-    }
-
-    private Vector2 SnapPosition = Vector2.zero;
-    private Vector2 SnapPoint(Vector2 p)
-    {
-        this.SnapPosition.x = (int)(p.x/this.halfRectWidth + Mathf.Sign(p.x) * 0.5f) * this.halfRectWidth;
-        this.SnapPosition.y = (int)(p.y/this.halfRectHeight + Mathf.Sign(p.y) * 0.5f) * this.halfRectHeight;
-
-        return this.SnapPosition;
+        this.OnUp.SafeInvoke();
+        this.Center.gameObject.SetActive(false);
     }
     #endregion
 }

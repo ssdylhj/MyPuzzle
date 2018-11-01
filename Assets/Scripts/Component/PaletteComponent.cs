@@ -4,8 +4,8 @@ using MyPuzzle;
 public class PaletteComponent
     : MonoBehaviour
 {
-    [HideInInspector]
-    public MyColor CurrentColor { get; private set; }
+    [SerializeField] private MyColor DefaultColor;
+    [HideInInspector] public MyColor CurrentColor { get; private set; }
 
     private void Start()
     {
@@ -14,6 +14,8 @@ public class PaletteComponent
         {
             c.OnColorChange = this.OnColorChange;
         }
+
+        this.CurrentColor = this.DefaultColor;
     }
 
     private void OnColorChange(MyColor c)

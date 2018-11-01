@@ -38,6 +38,11 @@ namespace MyPuzzle
             this.R = pos.R;
             this.C = pos.C;
         }
+
+        public bool Equal(Pos p)
+        {
+            return p.R == this.R && p.C == this.C;
+        }
     }
 
     public static class Utils
@@ -90,8 +95,8 @@ namespace MyPuzzle
 
         public static Direction ToDirection(this Vector2 dir)
         {
-            if (Mathf.Abs(dir.x) > float.Epsilon &&
-                Mathf.Abs(dir.y) > float.Epsilon)
+            if (Mathf.Abs(dir.x) < float.Epsilon &&
+                Mathf.Abs(dir.y) < float.Epsilon)
                 return Direction.None;
 
             if (Mathf.Abs(dir.x) < float.Epsilon)
@@ -99,6 +104,11 @@ namespace MyPuzzle
 
             if (Mathf.Abs(dir.y) < float.Epsilon)
                 return dir.x < 0 ? Direction.Left : Direction.Right;
+
+            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+                return dir.x < 0 ? Direction.Left : Direction.Right;
+            else if (Mathf.Abs(dir.x) < Mathf.Abs(dir.y))
+                return dir.y < 0 ? Direction.Down : Direction.Up;
 
             return Direction.None;
         }
