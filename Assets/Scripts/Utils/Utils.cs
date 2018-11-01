@@ -40,7 +40,7 @@ namespace MyPuzzle
         }
     }
 
-    public class Utils
+    public static class Utils
     {
         public static string ColorToString(MyColor color)
         {
@@ -77,6 +77,30 @@ namespace MyPuzzle
                 default: return Color.white;
             }
         }
-    }
 
+        public static Color ToColor(this MyColor c)
+        {
+            return MyColorToColor(c);
+        }
+
+        public static Vector2 ToVector2(this Vector3 v)
+        {
+            return v;
+        }
+
+        public static Direction ToDirection(this Vector2 dir)
+        {
+            if (Mathf.Abs(dir.x) > float.Epsilon &&
+                Mathf.Abs(dir.y) > float.Epsilon)
+                return Direction.None;
+
+            if (Mathf.Abs(dir.x) < float.Epsilon)
+                return dir.y < 0 ? Direction.Down : Direction.Up;
+
+            if (Mathf.Abs(dir.y) < float.Epsilon)
+                return dir.x < 0 ? Direction.Left : Direction.Right;
+
+            return Direction.None;
+        }
+    }
 }

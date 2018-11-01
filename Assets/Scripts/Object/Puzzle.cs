@@ -42,6 +42,8 @@ namespace MyPuzzle
                 this.Cubes[r, c].Clear(direct);
             else
                 this.Cubes[r, c].SetColor(direct, color);
+
+            this.Cubes[r, c].IsDirty = true;
         }
 
         public bool CheckResult()

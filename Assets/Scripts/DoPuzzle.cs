@@ -21,7 +21,8 @@ namespace MyPuzzle
 
         void Awake()
         {
-            string config = "4,4|r,3,2,3,2,4,3,3,0|b,0,0,2,2,0,0,2,2|2,2,r,b,r,b";
+            //string config = "4,4|r,3,2,3,2,4,3,3,0|b,0,0,2,2,0,0,2,2|2,2,r,b,r,b";
+            string config = Config.GetQuiz("Normal", 7);
             puzzle = new Puzzle(config);
 
             init();

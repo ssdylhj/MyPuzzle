@@ -13,6 +13,7 @@ namespace MyPuzzle
         public MyColor LeftColor { get; private set; }
         public MyColor RightColor { get; private set; }
         public bool IsBlock { get; private set; }
+        public bool IsDirty { get; set; }
 
         public Cube()
         {
@@ -31,6 +32,7 @@ namespace MyPuzzle
             this.LeftColor = colors[2];
             this.RightColor = colors[3];
             this.IsBlock = isBlock;
+            this.IsDirty = true;
         }
 
         public bool IsConnectTo(Direction direct, MyColor color)
@@ -107,6 +109,7 @@ namespace MyPuzzle
             this.LeftColor = MyColor.None;
             this.RightColor = MyColor.None;
             this.IsBlock = false;
+            this.IsDirty = false;
         }
 
         public override string ToString()
