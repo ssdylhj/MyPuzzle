@@ -85,15 +85,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameObjectRef.cs" />
+    <Compile Include="Assets\Scripts\Component\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\Component\CubeComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PaletteColorComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PaletteComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PuzzleComponent.cs" />
+    <Compile Include="Assets\Scripts\Component\ResultComponent.cs" />
     <Compile Include="Assets\Scripts\Config.cs" />
     <Compile Include="Assets\Scripts\Core\Initializer.cs" />
     <Compile Include="Assets\Scripts\Core\Main.cs" />
     <Compile Include="Assets\Scripts\DoPuzzle.cs" />
     <Compile Include="Assets\Scripts\Object\Cube.cs" />
+    <Compile Include="Assets\Scripts\Object\EditPuzzle.cs" />
     <Compile Include="Assets\Scripts\Object\Puzzle.cs" />
     <Compile Include="Assets\Scripts\Object\PuzzleConfig.cs" />
     <Compile Include="Assets\Scripts\Utils\ActionExt.cs" />

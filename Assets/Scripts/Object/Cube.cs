@@ -136,23 +136,4 @@ namespace MyPuzzle
             }
         }
     }
-
-    public class FilledBlock
-    {
-        public int R;
-        public int C;
-        public Cube Cube;
-
-        public FilledBlock(int r, int c, MyColor[] colors)
-        {
-            this.R = r;
-            this.C = c;
-            this.Cube = new Cube(colors, true);
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0},{1},{2}", this.R, this.C, this.Cube.ToString());
-        }
-    }
 }

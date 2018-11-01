@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using MyPuzzle;
@@ -10,34 +11,57 @@ public class PuzzleComponent
     [SerializeField] private int CellWidth;
     [SerializeField] private int CellHeigh;
     [SerializeField] private PaletteComponent PaletteComponent;
-    [SerializeField] private Button ResetButton;
-    [SerializeField] private Text WinText;
 
-    private GameObject[] rowNums;
-    private GameObject[] colNums;
+    public static PuzzleComponent Instance { get; private set; }
 
-    private Puzzle Puzzle;
-
+    private GameObjectRef refs;
     void Awake()
     {
-        string config = "4,4|r,3,2,3,2,4,3,3,0|b,0,0,2,2,0,0,2,2|2,2,r,b,r,b";
-        //string config = Config.GetQuiz("Normal", 7);
-        this.Puzzle = new Puzzle(config);
-        this.InitPuzzle();
-
-        this.ResetButton.onClick.AddListener(() => { this.Puzzle.Reset(); });
+        Instance = this;
+        this.refs = GetComponent<GameObjectRef>();
     }
 
+    public Puzzle Puzzle { get; private set; }
+    public void StartGame(string level, int quizID)
+    {
+        this.Reset();
+
+        string config = Config.GetQuiz(level, quizID);
+        this.Puzzle = new Puzzle(config);
+        this.InitPuzzle();
+        this.PaletteComponent.Init(new List<MyColor>(this.Puzzle.Config.TagNums.Keys));
+
+        this.winFlag = false;
+    }
+
+    #region Initialize Puzzle
     private void InitPuzzle()
     {
-        GameObjectRef refs = GetComponent<GameObjectRef>();
-        GameObject datum = refs["Datum"];
-        GameObject cube = refs["Cube"];
-        GameObject rowNum = refs["RowNum"];
-        GameObject colNum = refs["ColNum"];
+        this.InitCube();
+        this.InitLabel();
+    }
 
-        rowNums = new GameObject[this.Puzzle.Config.Row];
-        colNums = new GameObject[this.Puzzle.Config.Col];
+    public void Reset()
+    {
+        foreach (var c in this.cubes)
+            Destroy(c);
+
+        foreach (var r in this.rowLables)
+            Destroy(r);
+
+        foreach (var c in this.colLables)
+            Destroy(c);
+
+        this.cubes.Clear();
+        this.rowLables.Clear();
+        this.colLables.Clear();
+    }
+
+    private List<GameObject> cubes = new List<GameObject>();
+    private void InitCube()
+    {
+        var cube = refs["Cube"];
+        var datum = refs["Datum"];
 
         for (int r = 0; r < this.Puzzle.Config.Row; r++)
         {
@@ -54,33 +78,44 @@ public class PuzzleComponent
                 CubeComponent.OnDraw = this.DrawLine;
                 CubeComponent.OnDown = this.HandleOnDown;
                 CubeComponent.OnUp = this.HandleOnUp;
+
+                this.cubes.Add(newCube);
             }
         }
+    }
+
+    private List<GameObject> rowLables = new List<GameObject>();
+    private List<GameObject> colLables = new List<GameObject>();
+
+    private void InitLabel()
+    {
+        var datum = refs["Datum"];
+        var rowNum = refs["RowNum"];
+        var colNum = refs["ColNum"];
 
         for (int r = 0; r < this.Puzzle.Config.Row; r++)
         {
-            //GameObject newRowNum = Instantiate<GameObject>(rowNum);
             GameObject newRowNum = new GameObject();
             newRowNum.name = string.Format("rowNum({0})", r);
             newRowNum.transform.SetParent(datum.transform);
             newRowNum.transform.localPosition = new Vector3(-this.CellWidth, -r * this.CellHeigh, 0);
             newRowNum.SetActive(true);
 
-            rowNums[r] = newRowNum;
+            this.rowLables.Add(newRowNum);
         }
 
         for (int c = 0; c < this.Puzzle.Config.Col; c++)
         {
-            //GameObject newColNum = Instantiate<GameObject>(colNum);
             var newColNum = new GameObject();
             newColNum.name = string.Format("colNum({0})", c);
             newColNum.transform.SetParent(datum.transform);
             newColNum.transform.localPosition = new Vector3(c * this.CellWidth, 0, 0);
             newColNum.SetActive(true);
 
-            colNums[c] = newColNum;
+            this.colLables.Add(newColNum);
         }
 
+        var rowLength = this.rowLables.Count;
         var rowPos = Vector2.zero;
         var colPos = Vector2.zero;
         colPos.x = -16;
@@ -91,13 +126,13 @@ public class PuzzleComponent
             List<int> nums = kvp.Value;
 
             rowPos.x -= 16;
-            for (int i = 0; i < rowNums.Length; i++)
+            for (int i = 0; i < rowLength; i++)
             {
                 if (nums[i] == -1)
                     continue;
 
                 var num = Instantiate(rowNum);
-                num.transform.SetParent(rowNums[i].transform, false);
+                num.transform.SetParent(this.rowLables[i].transform, false);
                 num.transform.localPosition = rowPos;
                 Debug.Log(string.Format("i = {0} Pos: {1}/{2}", i, rowPos, num.transform.position));
 
@@ -109,49 +144,55 @@ public class PuzzleComponent
             }
 
             colPos.y += 16;
-            for (int i = 0; i < colNums.Length; i++)
+            for (int i = 0; i < this.colLables.Count; i++)
             {
-                if (nums[rowNums.Length + i] == -1)
+                if (nums[rowLength + i] == -1)
                     continue;
 
                 var num = Instantiate(rowNum);
-                num.transform.SetParent(colNums[i].transform);
+                num.transform.SetParent(this.colLables[i].transform);
                 num.transform.localPosition = colPos;
 
                 var text = num.GetComponent<Text>();
                 text.color = color.ToColor();
-                text.text = nums[rowNums.Length + i].ToString();
+                text.text = nums[rowLength + i].ToString();
 
                 num.SetActive(true);
             }
         }
+
     }
+    #endregion
 
     private bool DrawFlag = false;
     private void DrawLine(int r, int c, Direction direction)
     {
-        if (!this.DrawFlag)
+        if (!this.DrawFlag || this.winFlag)
             return;
-        Debug.Log(string.Format("DrawLine: r:{0} c: {1} Direction: {2}",
-            r, c,
-            direction));
+
         this.Puzzle.DrawLine(r, c, direction, this.PaletteComponent.CurrentColor);
     }
 
     private void HandleOnDown()
     {
-        Debug.Log("Mouse Down!");
         this.DrawFlag = true;
     }
 
     private void HandleOnUp()
     {
-        Debug.Log("Mouse Up!");
         this.DrawFlag = false;
 
         if (this.Puzzle.CheckResult())
         {
-            this.WinText.gameObject.SetActive(true);
+            this.OnWin();
         }
+    }
+
+    public Action OnWinEvent;
+    private bool winFlag;
+    private void OnWin()
+    {
+        this.winFlag = true;
+        this.OnWinEvent.SafeInvoke();
     }
 }

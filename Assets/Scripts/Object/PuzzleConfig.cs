@@ -10,9 +10,9 @@ namespace MyPuzzle
 {
     public class PuzzleConfig
     {
-        public int Row { get; private set; }
-        public int Col { get; private set; }
-        public Dictionary<MyColor, List<int>> TagNums { get; private set; }
+        public int Row { get; set; }
+        public int Col { get; set; }
+        public Dictionary<MyColor, List<int>> TagNums { get; set; }
         public List<string[]> Blocks { get; private set; }
 
         public PuzzleConfig(int row, int col)

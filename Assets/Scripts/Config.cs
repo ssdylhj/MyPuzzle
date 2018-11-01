@@ -17,11 +17,11 @@ namespace MyPuzzle
             return difficulties;
         }
 
-        public static int GetQuizNum(string difficulty)
+        public static StringCollection GetQuizsNumByDifficulty(string difficulty)
         {
             StringCollection quiz = new StringCollection();
             configIni.ReadKeys(difficulty, quiz);
-            return quiz.Count;
+            return quiz;
         }
 
         public static string GetQuiz(string difficulty, int index)

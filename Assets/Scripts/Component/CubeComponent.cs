@@ -31,7 +31,6 @@ public class CubeComponent
         this.halfRectHeight = this.RectTransform.rect.height / 2;
 
         this.InitPoint();
-        //Debug.Log(string.Format("rectWidth: {0} rectHeight: {1}", this.halfRectWidth, this.halfRectHeight));
     }
 
     private void InitPoint()
