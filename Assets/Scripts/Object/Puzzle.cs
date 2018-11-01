@@ -234,7 +234,7 @@ namespace MyPuzzle
 
                 // 走到这来说明路断了
                 return false;
-            } while (nowPos != startPos);
+            } while (!nowPos.Equal(startPos));
 
             if (wayCount != lineCount)
                 return false;

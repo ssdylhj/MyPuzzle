@@ -85,8 +85,10 @@ namespace MyPuzzle
                 case Direction.Down: this.DownColor = MyColor.None; break;
                 case Direction.Left: this.LeftColor = MyColor.None; break;
                 case Direction.Right: this.RightColor = MyColor.None; break;
-                default: return;
+                default: break;
             }
+
+            this.IsDirty = true;
         }
 
         public void SetColors(MyColor[] colors)
