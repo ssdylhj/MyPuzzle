@@ -106,12 +106,17 @@ namespace MyPuzzle
 
         public void Reset()
         {
+#if ! EditMode
+            if (this.IsBlock)
+                return;
+#endif
+
             this.UpColor = MyColor.None;
             this.DownColor = MyColor.None;
             this.LeftColor = MyColor.None;
             this.RightColor = MyColor.None;
             this.IsBlock = false;
-            this.IsDirty = false;
+            this.IsDirty = true;
         }
 
         public override string ToString()

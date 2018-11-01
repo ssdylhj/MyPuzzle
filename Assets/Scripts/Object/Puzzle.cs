@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -22,7 +21,7 @@ namespace MyPuzzle
                 for (int c = 0; c < this.Cubes.GetLength(1); c++)
                     this.Cubes[r, c] = new Cube();
 
-            foreach (var block in  this.Config.Blocks)
+            foreach (var block in this.Config.Blocks)
             {
                 int r = int.Parse(block[0]);
                 int c = int.Parse(block[1]);
@@ -32,10 +31,34 @@ namespace MyPuzzle
             }
         }
 
+        public void Reset()
+        {
+            for (int r = 0; r < this.Cubes.GetLength(0); r++)
+                for (int c = 0; c < this.Cubes.GetLength(1); c++)
+                    this.Cubes[r, c].Reset();
+        }
+
         public void DrawLine(int r, int c, Direction direct, MyColor color)
         {
-            if (this.Cubes[r, c] == null)
-                this.Cubes[r, c] = new Cube();
+            drawLine(r, c, direct, color);
+            switch (direct)
+            {
+                case Direction.Up: drawLine(r - 1, c, Direction.Down, color); break;
+                case Direction.Down: drawLine(r + 1, c, Direction.Up, color); break;
+                case Direction.Left: drawLine(r, c - 1, Direction.Right, color); break;
+                case Direction.Right: drawLine(r, c + 1, Direction.Left, color); break;
+            }
+        }
+
+        private void drawLine(int r, int c, Direction direct, MyColor color)
+        {
+            if (r < 0 || r >= this.Config.Row || c < 0 || c >= this.Config.Col)
+                return;
+
+#if ! EditMode
+            if (this.Cubes[r, c].IsBlock)
+                return;
+#endif
 
             // 已经有该颜色连接该方向。则删除
             if (this.Cubes[r, c].IsConnectTo(direct, color))
@@ -234,7 +257,7 @@ namespace MyPuzzle
 
                 // 走到这来说明路断了
                 return false;
-            } while (!nowPos.Equal(startPos));
+            } while (! nowPos.Equal(startPos));
 
             if (wayCount != lineCount)
                 return false;
