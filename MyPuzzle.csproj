@@ -85,12 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameObjectRef.cs" />
+    <Compile Include="Assets\Scripts\Component\Addons\CommandMgr.cs" />
+    <Compile Include="Assets\Scripts\Component\Addons\ICommand.cs" />
     <Compile Include="Assets\Scripts\Component\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\Component\CubeComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PaletteColorComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PaletteComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PuzzleComponent.cs" />
     <Compile Include="Assets\Scripts\Component\ResultComponent.cs" />
+    <Compile Include="Assets\Scripts\Component\TopMenuComponent.cs" />
     <Compile Include="Assets\Scripts\Config.cs" />
     <Compile Include="Assets\Scripts\Core\Initializer.cs" />
     <Compile Include="Assets\Scripts\Core\Main.cs" />
@@ -102,6 +105,7 @@
     <Compile Include="Assets\Scripts\Utils\ActionExt.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

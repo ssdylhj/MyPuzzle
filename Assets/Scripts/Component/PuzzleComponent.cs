@@ -55,6 +55,7 @@ public class PuzzleComponent
         this.cubes.Clear();
         this.rowLables.Clear();
         this.colLables.Clear();
+        this.PaletteComponent.ResetPalette();
     }
 
     private List<GameObject> cubes = new List<GameObject>();

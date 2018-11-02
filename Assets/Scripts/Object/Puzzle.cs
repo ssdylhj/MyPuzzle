@@ -43,6 +43,9 @@ namespace MyPuzzle
 
         public void DrawLine(int r, int c, Direction direct, MyColor color)
         {
+            if (isBorderToOutside(r, c, direct))
+                return;
+
             drawLine(r, c, direct, color);
             switch (direct)
             {
@@ -70,6 +73,23 @@ namespace MyPuzzle
                 this.Cubes[r, c].SetColor(direct, color);
 
             this.Cubes[r, c].IsDirty = true;
+        }
+
+        private bool isBorderToOutside(int r, int c, Direction direct)
+        {
+            if (r == 0 && direct == Direction.Up)
+                return true;
+
+            if (r == this.Config.Row - 1 && direct == Direction.Down)
+                return true;
+
+            if (c == 0 && direct == Direction.Left)
+                return true;
+
+            if (c == this.Config.Col - 1 && direct == Direction.Right)
+                return true;
+
+            return false;
         }
 
         public bool CheckResult()

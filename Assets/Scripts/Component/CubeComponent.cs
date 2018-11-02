@@ -16,7 +16,9 @@ public class CubeComponent
     [SerializeField] private Image DownLine;
     [SerializeField] private Image LeftLine;
     [SerializeField] private Image Center;
+    [SerializeField] private Color BlockColor;
 
+    private Image Background;
     private RectTransform RectTransform;
     private float halfRectWidth;
     private float halfRectHeight;
@@ -26,6 +28,7 @@ public class CubeComponent
     private Vector2 LeftPoint;
     private void Start()
     {
+        this.Background = this.GetComponent<Image>();
         this.RectTransform = this.GetComponent<RectTransform>();
         this.halfRectWidth = this.RectTransform.rect.width / 2;
         this.halfRectHeight = this.RectTransform.rect.height / 2;
@@ -73,6 +76,11 @@ public class CubeComponent
 
         this.LeftLine.color = this.Cube.LeftColor.ToColor();
         this.LeftLine.enabled = this.Cube.LeftColor != MyColor.None;
+
+        if (this.Cube.IsBlock)
+        {
+            this.Background.color = this.BlockColor;
+        }
     }
 
     #region Event Handler

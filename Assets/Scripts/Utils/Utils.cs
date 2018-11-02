@@ -112,5 +112,16 @@ namespace MyPuzzle
 
             return Direction.None;
         }
+
+        public static void SetActiveEx(this GameObject go, bool flag)
+        {
+            if (go == null)
+                return;
+
+            if (go.activeSelf == flag)
+                return;
+
+            go.SetActive(flag);
+        }
     }
 }
