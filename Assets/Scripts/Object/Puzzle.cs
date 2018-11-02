@@ -14,8 +14,8 @@ namespace MyPuzzle
 
         public Puzzle(string config)
         {
-            //if (config == string.Empty)
-            //    config = "2,2|-1,-1,-1,-1";
+            if (config == string.Empty)
+                config = "2,2|r,-1,-1,-1,-1";
 
             this.Config = new PuzzleConfig(config);
             this.Cubes = new Cube[this.Config.Row, this.Config.Col];
@@ -147,6 +147,10 @@ namespace MyPuzzle
                 {
                     int cn = this.Cubes[r, c].ConnectionNum(color);
                     if (cn == 1 || cn == 3)
+                        return false;
+
+                    // 玩家的连线不允许出现十字
+                    if (cn == 4 && ! this.Cubes[r, c].IsBlock)
                         return false;
 
                     ret[r, c] = (cn != 0);

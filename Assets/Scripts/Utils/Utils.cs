@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace MyPuzzle
 {
+    //  
     public enum MyColor
     {
         None = 0,

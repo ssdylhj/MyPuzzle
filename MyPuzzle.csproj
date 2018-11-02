@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\Component\Addons\ICommand.cs" />
     <Compile Include="Assets\Scripts\Component\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\Component\CubeComponent.cs" />
+    <Compile Include="Assets\Scripts\Component\CubeComponent.Tag.cs" />
     <Compile Include="Assets\Scripts\Component\PaletteColorComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PaletteComponent.cs" />
     <Compile Include="Assets\Scripts\Component\PuzzleComponent.cs" />

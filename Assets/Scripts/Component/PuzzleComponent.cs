@@ -21,6 +21,7 @@ public class PuzzleComponent
         this.refs = GetComponent<GameObjectRef>();
     }
 
+    public MyColor CurrentColor { get { return this.PaletteComponent.CurrentColor; } }
     public Puzzle Puzzle { get; private set; }
     public void StartGame(string level, int quizID)
     {
@@ -75,7 +76,7 @@ public class PuzzleComponent
                 newCube.SetActive(true);
 
                 var CubeComponent = newCube.GetComponent<CubeComponent>();
-                CubeComponent.Setup(this.Puzzle.Cubes[r, c], r, c);
+                CubeComponent.Setup(this.Puzzle, r, c);
                 CubeComponent.OnDraw = this.DrawLine;
                 CubeComponent.OnDown = this.HandleOnDown;
                 CubeComponent.OnUp = this.HandleOnUp;

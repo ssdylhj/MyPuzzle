@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using MyPuzzle;
 
-public class CubeComponent
+public partial class CubeComponent
     : MonoBehaviour
     , IPointerDownHandler
     , IPointerUpHandler
@@ -49,13 +49,14 @@ public class CubeComponent
     private Cube Cube;
     private int Row;
     private int Col;
-    public void Setup(Cube cube, int r, int c)
+    public void Setup(Puzzle puzzle, int r, int c)
     {
-        this.Cube = cube;
+        this.Cube = puzzle.Cubes[r, c];
         this.Row = r;
         this.Col = c;
 
         this.Cube.IsDirty = true;
+        this.InitTags(new System.Collections.Generic.List<MyColor>(puzzle.Config.TagNums.Keys));
     }
 
     private void Update()
@@ -91,7 +92,7 @@ public class CubeComponent
         var dir = localPos.ToDirection();
 
         //OnDraw.SafeInvoke(this.Row, this.Col, dir);
-        //Debug.Log(string.Format("Mouse Enter! {0}/{1}", this.Row, this.Col));
+        Debug.Log(string.Format("Mouse Enter! {0}/{1}", this.Row, this.Col));
         //this.Center.gameObject.SetActive(true);
     }
 
@@ -111,12 +112,14 @@ public class CubeComponent
     {
         this.OnDown.SafeInvoke();
         this.Center.gameObject.SetActive(true);
+        Debug.Log(string.Format("Pointer Down! {0}/{1}", this.Row, this.Col));
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         this.OnUp.SafeInvoke();
         this.Center.gameObject.SetActive(false);
+        Debug.Log(string.Format("Pointer Up! {0}/{1}", this.Row, this.Col));
     }
     #endregion
 }
