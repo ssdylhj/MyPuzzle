@@ -42,6 +42,9 @@ public partial class CubeComponent
     private Dictionary<MyColor, Text> colorTag = new Dictionary<MyColor, Text>();
     public void HandleClick()
     {
+        if (this.Cube.IsBlock)
+            return;
+
         var currentColor = PuzzleComponent.Instance.CurrentColor;
         var currentStatus = this.colorStatus.ContainsKey(currentColor) ? this.colorStatus[currentColor] : TagStatus.None;
 
